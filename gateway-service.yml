@@ -1,20 +1,29 @@
 spring:
-    cloud:
-        config:
-            discovery:
-                enabled: 'true'
-                serviceId: config-service
-        gateway:
-            routes:
-              - id: checkout-service
-                uri: http://localhost:8082
-                predicates:
-                  - Path=/checkout
-                filters:
-                  - RewritePath=/checkout, /checkout
+  config:
+    import: 'optional:configserver:'
+  application:
+    name: gateway-service
+  cloud:
     config:
-        import: 'optional:configserver:'
-    application:
-        name: gateway-service
+      discovery:
+        enabled: true
+        serviceId: config-service
+    gateway:
+      routes:
+        - id: checkout-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/checkout
+          filters:
+            - RewritePath=/checkout, /checkout
 server:
-    port: 8084
+  port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # expone todos los endpoints, incluyendo env
+  endpoint:
+    env:
+      access: ACTUATOR  # controla quién puede acceder (por defecto, roles)
